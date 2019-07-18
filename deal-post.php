@@ -90,3 +90,49 @@ function themes_taxonomy() {
     );  
 }  
 add_action( 'init', 'themes_taxonomy');
+
+
+
+function dealss( $atts ) {
+global $post,$wpdb;
+            ob_start();
+           $args = array( 
+           'post_type' => 'deals',
+           'order' => 'asc'
+        );
+        $deal_query = new WP_Query( $args );
+
+while ($deal_query->have_posts()) : $deal_query->the_post();
+$terms = get_the_terms( $post->ID, 'sector' );
+?>
+<div class="col-md-3 col-sm-12 float-left one_deal">
+	<div class="posters">
+		
+	<div class="col-md-4 col-sm-12 float-left thumnail">
+		<?php twentysixteen_post_thumbnail(); ?>
+	</div>
+		<div class="col-md-8 col-sm-12 float-left title">
+			<h3>
+				<a class="title" href="<?php the_permalink() ?>"><?php the_title();?></a></h3>
+			<p class="sector_name"><strong>Sector:</strong></p> <?php if ($terms) {
+		   foreach($terms as $term) {
+			   echo "<p class='sector_name'><a href='sector/$term->slug'>";
+     print_r($term->name);
+			   echo	"</a></p>";
+    } } ?>
+		</div>
+	<div class="col-md-12 col-sm-12 clearfix metass">
+		<p class="launch_yr"><strong>Launch Date:</strong> <?php echo get_field( "launch" );?>	
+			<p class="founder launch_yr"><strong>Founders:</strong> <?php echo get_field( "founders" );?>
+			<p class="investes launch_yr"><strong>Investors:</strong> <?php echo get_field( "investors" );?></p>
+		<p class="read_more"><a href="<?php the_permalink(); ?>">Read More</a>
+				</p>
+	</div>
+</div>
+</div>
+<?php
+endwhile;
+return ob_get_clean();
+
+}
+add_shortcode( 'all-deals', 'dealss' );
